@@ -109,10 +109,11 @@ public class NodeResource {
 			for (; nodes.hasNext();) {
 				Node child = nodes.nextNode();
 				System.out.println(child.getName());
-				v = vm.getBaseVersion(child.getPath());
+				//v = vm.getBaseVersion(child.getPath());
 				BusinessTerm term = new BusinessTerm();
 				term.setTermID(child.getName());
-				term.setDescription(v.getFrozenNode().getProperty("value").getString());
+				//term.setDescription(v.getFrozenNode().getProperty("value").getString());
+				term.setDescription(child.getProperty("value").getString());
 				terms.add(term);
 			}				
 		} catch (Exception e) {
@@ -149,10 +150,11 @@ public class NodeResource {
 			System.out.println(">>>> RETRIEVE " + termID);
 			Node child;
 			child = rootTerms.getNode(termID);
-			v = vm.getBaseVersion(child.getPath());
-			description = v.getFrozenNode().getProperty("value").getString();
+			//v = vm.getBaseVersion(child.getPath());
+			description = child.getProperty("value").getString();
+			//description = v.getFrozenNode().getProperty("value").getString();
 			VersionIterator vi = vm.getVersionHistory(child.getPath()).getAllLinearVersions();
-			vi.skip(1); // skip the jcr:rootVersion
+			if (vi.hasNext()) vi.skip(1); // skip the jcr:rootVersion
 			while (vi.hasNext()) {
 				Version ver = vi.nextVersion();
 				//System.out.println("Name: " + ver.getName() + ", Identifier: " + ver.getIdentifier() + ", jcr:lastModified: " + child.getProperty("jcr:lastModified").getString());						
@@ -210,7 +212,7 @@ public class NodeResource {
 			try {
 				child = rootTerms.getNode(term.getTermID());
 				System.out.println(">>>>> UPDATE " + term.getTermID());
-				vm.checkout(child.getPath());
+				vm.checkpoint(child.getPath());
 				//output = "Updated node " + nodeName;
 				child.setProperty("value", term.getDescription());
 				child.setProperty("jcr:lastModified",Calendar.getInstance());
